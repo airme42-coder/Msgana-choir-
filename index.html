@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Songbook</title>
+    <style>
+        :root {
+            /* Default theme (dark) */
+            --primary-color: #1e1e1e;
+            --secondary-color: #252526;
+            --accent-color: #007acc;
+            --text-color: #d4d4d4;
+            --border-color: #454545;
+            --success-color: #4CAF50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+            --favorite-color: #ff4444;
+            --background-color: var(--primary-color);
+            --card-bg: var(--secondary-color);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --highlight-color: #41331c;
+            --lyric-font-size: 1rem;
+            --lyric-line-height: 1.8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0;
+            padding:0px;
+            width: 100%;
+            height: 200px;
+            flex-wrap: wrap;
+            background-image: url("image.jpg");
+               background-size: cover;
+               background-repeat: no-repeat;
+               background-position: center;
+               box-sizing: border-box;
+}
+
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0px;
+        }
+
+        .theme-selector select {
+            padding: 0px 0px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 0px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+
+        .icon-btn:hover {
+            background-color: var(--highlight-color);
+        }
+
+        .favorite-btn {
+            color: var(--favorite-color);
+        }
+
+        .song-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .song-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .song-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .song-info {
+            flex: 1;
+        }
+
+        .song-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .song-artist {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .song-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--background-color);
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .detail-value {
+            padding: 8px;
+            background-color: var(--card-bg);
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        button[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button[type="submit"]:hover {
+            opacity: 0.9;
+        }
+
+        .song-view {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .song-view h2 {
+            margin-bottom: 10px;
+        }
+
+        .song-view h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        /* Audio Player Styles */
+        .audio-player {
+            margin: 20px 0;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .audio-player audio {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .audio-controls input[type="range"] {
+            flex: 1;
+        }
+
+        .lyrics-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background-color: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .control-group input[type="range"] {
+            width: 100px;
+        }
+
+        .lyrics-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            white-space: pre-wrap;
+            font-family: inherit;
+            line-height: var(--lyric-line-height);
+            font-size: var(--lyric-font-size);
+            overflow-x: auto;
+            transition: all 0.3s ease;
+        }
+
+        .lyrics-container pre {
+            margin: 0;
+            font-family: inherit;
+        }
+
+        .highlight-section {
+            background-color: var(--highlight-color);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-right: 15px;
+            color: var(--text-color);
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        /* Full-screen mode styles */
+        body.full-screen-mode {
+            overflow: hidden;
+        }
+
+        .full-screen-mode .container {
+            display: none;
+        }
+
+        .full-screen-lyrics {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            z-index: 1000;
+            padding: 20px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-screen-lyrics .lyrics-container {
+            flex: 1;
+            max-width: 100%;
+            padding: 30px;
+            box-shadow: none;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .full-screen-lyrics .lyrics-container pre {
+            width: 100%;
+            text-align: center;
+        }
+
+        .full-screen-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+        }
+
+        /* Share modal styles */
+        .share-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .share-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .share-option:hover {
+            background-color: var(--highlight-color);
+        }
+
+        .share-option svg {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 5px;
+        }
+
+        /* Favorite indicator */
+        .favorite-indicator {
+            color: var(--favorite-color);
+        }
+
+        /* Tab navigation */
+        .tab-nav {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .tab-btn.active {
+            font-weight: bold;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .theme-selector {
+                margin-top: 0px;
+                align-self: flex-end;
+            }
+            
+            .lyrics-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .control-group {
+                width: 100%;
+            }
+            
+            .control-group input[type="range"] {
+                flex: 1;
+            }
+
+            .full-screen-lyrics .lyrics-container {
+                padding: 15px;
+                align-items: flex-start;
+            }
+
+            .share-options {
+                justify-content: center;
+            }
+        }
+       .ya{
+            padding-left: 270px;
+            position: center;
+            text-align: center;
+        }
+       .yu{
+           margin-top: 25px;
+           padding-left: 290px;
+           text-align: center;
+           
+       }
+    </style>
+</head>
+<body>
+            <header>
+            <h2 class="ya">የምስጋና መዘምራን     ህብረት</h2>
+          <h2 class="yu">  <br> የመዝሙር ደብተር</h2>
+
+            <div class="theme-selector">
+                <select id="themeSelect">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="polarized">Polarized</option>
+                    <option value="monokia">Monokia</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="forest">Forest</option>
+                </select>
+            </div>
+        </header>
+
+    <div class="container">
+        
+        <div class="tab-nav">
+            <button class="tab-btn active" id="allSongsTab">All Songs</button>
+            <button class="tab-btn" id="favoritesTab">Favorites</button>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search songs...">
+            <button id="addSongBtn" class="icon-btn" title="Add New Song">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div id="songList" class="song-list"></div>
+        
+        <div id="songView" class="song-view">
+            <div class="back-btn" id="backToList">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Back to list
+            </div>
+            <h2 id="viewSongTitle"></h2>
+            <h3 id="viewSongArtist"></h3>
+            
+            <!-- Audio Player Section -->
+            <div class="audio-player">
+                <audio id="songAudio" controls>
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="audio-controls">
+                    <button id="playBtn" class="icon-btn" title="Play">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </button>
+                    <button id="pauseBtn" class="icon-btn" title="Pause">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                        </svg>
+                    </button>
+                    <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
+                </div>
+            </div>
+            
+            <div class="lyrics-controls">
+                <div class="control-group">
+                    <label for="fontSizeControl">Font Size:</label>
+                    <input type="range" id="fontSizeControl" min="0.8" max="2.4" step="0.1" value="1">
+                    <span id="fontSizeValue">1rem</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="lineHeightControl">Line Height:</label>
+                    <input type="range" id="lineHeightControl" min="1.2" max="3" step="0.1" value="1.8">
+                    <span id="lineHeightValue">1.8</span>
+                </div>
+                
+                <div class="control-group">
+                    <button id="highlightChorusBtn" class="icon-btn" title="Highlight Choruses">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4c0 1.1.9 2 2 2h4v-2H5v-4zM5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14-2h-4v2h4v4h2V5c0-1.1-.9-2-2-2zm0 16h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4z"/>
+                        </svg>
+                    </button>
+                    
+                    <button id="favoriteBtn" class="icon-btn favorite-btn" title="Add to Favorites">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                    </button>
+                    <button id="copyLyricsBtn" class="icon-btn" title="Copy Lyrics">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                    </button>
+                    
+                    <button id="shareBtn" class="icon-btn" title="Share Song">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                        </svg>
+                    </button>
+                    
+                    <button id="fullScreenBtn" class="icon-btn" title="Full Screen">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                        </svg>
+                    </button>
+                    
+                    <button id="detailsBtn" class="icon-btn" title="Song Details">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="lyrics-container">
+                <pre id="viewSongLyrics"></pre>
+            </div>
+        </div>
+
+        <!-- Add Song Modal -->
+        <div id="addSongModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add New Song</h2>
+                <form id="songForm">
+                    <div class="form-group">
+                        <label for="songTitle">Title</label>
+                        <input type="text" id="songTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="songArtist">Artist</label>
+                        <input type="text" id="songArtist" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="songLyrics">Lyrics</label>
+                        <textarea id="songLyrics" rows="10" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="songAudioFile">Audio File (MP3)</label>
+                        <input type="file" id="songAudioFile" accept="audio/mp3">
+                    </div>
+                    <div class="form-group">
+                        <label for="songWriter">Writer</label>
+                        <input type="text" id="songWriter">
+                    </div>
+                    <div class="form-group">
+                        <label for="songRhythm">Rhythm</label>
+                        <input type="text" id="songRhythm" placeholder="e.g. 4/4">
+                    </div>
+                    <div class="form-group">
+                        <label for="songChord">Music Chord</label>
+                        <input type="text" id="songChord" placeholder="e.g. C, G, Am, F">
+                    </div>
+                    <div class="form-group">
+                        <label for="songDate">Date Written</label>
+                        <input type="date" id="songDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="songGenre">Genre</label>
+                        <input type="text" id="songGenre">
+                    </div>
+                    <button type="submit">Save Song</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Share Modal -->
+        <div id="shareModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Share Song</h2>
+                <p>Share this song with others:</p>
+                <div class="share-options">
+                    <div class="share-option" id="shareTwitter">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z" fill="#1DA1F2"/>
+                        </svg>
+                        <span>Twitter</span>
+                    </div>
+                    <div class="share-option" id="shareFacebook">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" fill="#1877F2"/>
+                        </svg>
+                        <span>Facebook</span>
+                    </div>
+                    <div class="share-option" id="shareWhatsApp">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="#25D366"/>
+                        </svg>
+                        <span>WhatsApp</span>
+                    </div>
+                    <div class="share-option" id="shareCopyLink">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        <span>Copy Link</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Modal -->
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Song Details</h2>
+                <div class="form-group">
+                    <label>Writer:</label>
+                    <div id="detailWriter" class="detail-value">Not specified</div>
+                </div>
+                <div class="form-group">
+                    <label>Rhythm:</label>
+                    <div id="detailRhythm" class="detail-value">Not specified</div>
+                </div>
+                <div class="form-group">
+                    <label>Music Chord:</label>
+                    <div id="detailChord" class="detail-value">Not specified</div>
+                </div>
+                <div class="form-group">
+                    <label>Date Written:</label>
+                    <div id="detailDate" class="detail-value">Not specified</div>
+                </div>
+                <div class="form-group">
+                    <label>Genre:</label>
+                    <div id="detailGenre" class="detail-value">Not specified</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Screen Lyrics Container (hidden by default) -->
+    <div id="fullScreenLyrics" class="full-screen-lyrics" style="display: none;">
+        <div class="lyrics-container">
+            <pre id="fullScreenLyricsContent"></pre>
+        </div>
+        <div class="full-screen-controls">
+            <button id="exitFullScreenBtn" class="icon-btn" title="Exit Full Screen">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Current view state
+        let currentView = 'all';
+        let currentSong = null;
+
+        // Audio elements
+        const audioPlayer = document.getElementById('songAudio');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const volumeControl = document.getElementById('volumeControl');
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load theme preference
+            loadTheme();
+            
+            // Initialize song list
+            loadSongs();
+          
+            // Set up event listeners
+            document.getElementById('searchInput').addEventListener('input', searchSongs);
+            document.getElementById('addSongBtn').addEventListener('click', showAddSongModal);
+            document.getElementById('themeSelect').addEventListener('change', changeTheme);
+            document.getElementById('backToList').addEventListener('click', showSongList);
+            document.getElementById('allSongsTab').addEventListener('click', () => switchTab('all'));
+            document.getElementById('favoritesTab').addEventListener('click', () => switchTab('favorites'));
+            
+            // Lyrics controls
+            document.getElementById('fontSizeControl').addEventListener('input', updateFontSize);
+            document.getElementById('lineHeightControl').addEventListener('input', updateLineHeight);
+            document.getElementById('highlightChorusBtn').addEventListener('click', highlightChoruses);
+            document.getElementById('favoriteBtn').addEventListener('click', toggleFavorite);
+            document.getElementById('shareBtn').addEventListener('click', showShareModal);
+            document.getElementById('copyLyricsBtn').addEventListener('click', copyLyrics);
+            document.getElementById('fullScreenBtn').addEventListener('click', toggleFullScreen);
+            document.getElementById('detailsBtn').addEventListener('click', showDetailsModal);
+            document.getElementById('exitFullScreenBtn').addEventListener('click', exitFullScreen);
+            
+            // Audio control listeners
+            playBtn.addEventListener('click', () => {
+                audioPlayer.play();
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'block';
+            });
+            
+            pauseBtn.addEventListener('click', () => {
+                audioPlayer.pause();
+                playBtn.style.display = 'block';
+                pauseBtn.style.display = 'none';
+            });
+            
+            volumeControl.addEventListener('input', (e) => {
+                audioPlayer.volume = e.target.value;
+            });
+            
+            // Handle audio events
+            audioPlayer.addEventListener('play', () => {
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'block';
+            });
+            
+            audioPlayer.addEventListener('pause', () => {
+                playBtn.style.display = 'block';
+                pauseBtn.style.display = 'none';
+            });
+            
+            // Initialize volume
+            audioPlayer.volume = volumeControl.value;
+            
+            // Modal event listeners
+            document.querySelectorAll('.close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+            
+            // Form submission
+            document.getElementById('songForm').addEventListener('submit', handleSongFormSubmit);
+            
+            // Share options
+            document.getElementById('shareTwitter').addEventListener('click', shareToTwitter);
+            document.getElementById('shareFacebook').addEventListener('click', shareToFacebook);
+            document.getElementById('shareWhatsApp').addEventListener('click', shareToWhatsApp);
+            document.getElementById('shareCopyLink').addEventListener('click', copyShareLink);
+        });
+
+        // Load songs from localStorage
+        function loadSongs() {
+            let songs = JSON.parse(localStorage.getItem('songs')) || [];
+            
+            // If no songs in storage, load demo songs
+            if (songs.length === 0) {
+                songs = loadDemoSongs();
+                localStorage.setItem('songs', JSON.stringify(songs));
+            }
+            
+            renderSongList(songs);
+        }
+
+        // Load demo songs
+        function loadDemoSongs() {
+            const demoLyrics = [
+                "[አዝ፡]\nእግሩ እንደጋለ ብረት አይኖቹ ነበልባል\nበወርቅ የታጠቀ እርሱን ማን ይመስላል\nከሰው ልጆች ሁሉ ከፍጥረትም መሐል\nእንደ ኢየሱስ ያለ ከወዴት ይገኛል\n\nኢየሱስ (4x)\n\n[1]\nበታላቅ ዙፋን ተቀምጠሐል\nብርሃን እንደ ልብስ ለብሰኸዋል\nፍጥረት በሙሉ ያመልክሀል\nኢየሱስ ተብሎ ይጠራልሃል\n\nኢየሱስ (4x)\n\n[2]\nበፍቅር ሚገዛ የፍቅር አባት ነው\nእርሱን ተጠግቶ የከሰረ ማን ነው\nከቀይ እንቁ ደምቆ እንደ ብርሃን ጮራ\nለዘላለም ሚኖር ከፍ ባለ ስፍራ\n\nኢየሱስ (4x)\n\n[3]\nበግርማና በሞገስ በክብር ተሞልቶ\nለዘላለም ሚኖር በነግስት ነግሶ\nሁሉም ተንበርክኮ ክቡር ነህ ይለዋል\nእርሱን ኢየሱስ ማንስ ይመስለዋል \n\nኢየሱስ (4x)\n",
+                "[አዝ፡]\nበቀራኒዮ መስቀል ላይ የሞተው\nበጎልጎታ አናት ላይ የሞተው\nእኔን ከሞት ሊያወጣኝ ሊያድነኝ ነው\nክብር ክብር ሃሌሉያ ኦ.ሆ\nክብር ክብር ሃሌሉያ ሆ.ሆ.ሆ\n\n[1]\nደምግባት የለውም ሚማርክ የሚስብ\nዘፍጥረትን ለመዳን ሲመጣ ለማሰብ\nበሁሉ የተጠላ ቢመስል የተናቀ\nዘፍጥረት በእርሱ ማዳን ተገረመ ተደነቀ\nአምላኩን አወቀ\n\n[2]\nእንደ ሚታረድ በግ ዝም ብሎ የተነዳ\nበደሙ ከፈለው የኀጢአቴን እዳ\nየሜይገባኝን ክብርን ተሰጥቶኛልወ\nአላፈረብኝም ልጄ ብሎ ጠርቶኛ\nኢየሱስ ይወደኛልn\n\n[3]\nክብሩ እንደ መቀማት ሳያስብ ሳይቆጥር\nእንደ እኔ ሰው ሆነ ተገለጠ በምድር\nማነው እንዲ ያለ የታመነ ፍፁም ወዳጅ\nወደ ቤቱ አስገባኝ ከፍቶልኝ የፍቅር ደጅ\nሆንኩኝ የእግዚአብሔር ልጅ\n",
+                "[አዝ፡]\nክቡር ነህ(2x)\nክቡር ነህ እግዚአብሔር\nበቀንም በማታም ስለ አንተ እንዘምር\nለአንተ ይዘምር (2x)\nእንዳንተ ያለ የለም በሰማይ በምድር\n\n[1]\nታላቅ ሆነህ በዙፋንህ\nሳትለወጥ ትኖራለህ\nበሰማይ ሚበረውን በምድር ሚራመደው\nየታላቅነት የአንተ ምስክር ነው\n\nለአንተ ይዘምር (2x)\nእንዳንተ ያለ የለም በሰማይ በምድር\n\n[2]\nክረምት አልፎ በጋው መጣ\nሁሉን ቀየርክ አንተ ጌታ\nይሄኛውን ሄዶ ያንን የምታመጣው\nየአንተ ማንነት ዘላለም ህያው ነው\n\nለአንተ ይዘምር (2x)\nእንዳንተ ያለ የለም በሰማይ በምድር\n\n[3]\nዘመን ሲያልፍ ሁሉ ሲሻር\nህያው ማነው ከአንተ በቀር\nሚሳንህ የሌለ የሆንከው ኤሻዳይ\nሁሉን ትገዛለህ ሳይኖርብህ ከልካይ\n\nለአንተ ይዘምር (2x)\nnእንዳንተ ያለ የለም በሰማይ በምድር\n\n",
+                "[1]\nስምህ የፀና ግንብ ሁሉን የሚገዛ\nአንተን የሚጠራ ከጥፋት ያመልጣል\nሁሉን ትችላለህ እልሻዳይ ነህ ኢየሱስ\nበዘላለም ዙፋን ለዘላለም ንገስ\n\n[አዝ፡]\nእኔ እሮጣለሁ (2x) ወደ ፊትህ\nከፍ ያደርጋል (2×) ቅዱስ ስምህ\nኢየሱስ የሚለው ስም የከበረ ነው\nበማዳን የበረታ እንደሱ ማን ነው\n\n[2]\nጌታ አንተን እያሉ ሰላማቸው በዝቶ\nፊታቸው ያበራል በደስታ ተሞልቶ\nየስም ብርሃን ለእኔም በርቶልኛል\nበፊትህ አቆማለሁ በአንተ ደስ ይለኛል\n\n[አዝ፡]\nእኔ እሮጣለሁ (2x) ወደ ፊትህ\nከፍ ያደርጋል (2×) ቅዱስ ስምህ\nኢየሱስ የሚለው ስም የከበረ ነው\nበማዳን የበረታ እንደሱ ማን ነው\n\n[3]\nበአንተ በአምላኬ ነፍሴ ተይዛለች\nየሚያስፈራት የለም ከአንተ ጋር ሆናለች\nህይወት አገኘሁኝ ወደ አንተ ስጠጋ\nበደምህ ገዛኸኝ ልጅ ሆንኩኝ በፀጋ\n\n[አዝ፡]\nእኔ እሮጣለሁ (2x) ወደ ፊትህ\nከፍ ያደርጋል (2×) ቅዱስ ስምህ\nኢየሱስ የሚለው ስም የከበረ ነው\nበማዳን የበረታ እንደሱ ማን ነው\n\n",
+               "[1]\nበጨለማ አለም በሞት ተከበን\nልባችን ወድቆ እጅጉን ፈርተን\nጌታ ይመስገን ዛሬ አምልጠናል\nለስሙ ክብር ዜማ ሞልቶናል(2×)\n\n[አዝ፡]\nክብር አለን ክብር አለን እኛስ\nክብር አለን ክብር አለን እኛስ \nለታረደው በግ  ለጌታ እየሱስ\nለታረደው በግ ለጌታ እየሱስ\n\n[2]\nየታሰርንበትን እስራት ለፈታ \nሁሉም ለሚያድን ለከበረው ጌታ ኦ\nክብር አለን ክብር አለን እኛስ\nክብር አለን ክብር አለን እኛስ\n\n[3]\nከዘር ከቋንቋ ከነገድ ዋጅቶ \nላባቱ መንግስ ካህናት አድርጎ\nባፈሰሰው ደም ንፁ  አድርጎናል\nእንዲ አምሮብን ያዘምረናል\n\n[አዝ፡]\nክብር አለን ክብር አለን እኛስ\nክብር አለን ክብር አለን አኛስ\nለታረደው በግ ለጌታ እየሱስ\nለታረደው በግ ለጌታ እየሱስ\n\n[4]\nከስሞች ሁሉ የሚበልጠው ስም\nሁሉም ሚያከብረው እንደሱ የለም\nጻዲቅም ሮጦ  ከፍ ከፍ ብሏል\nእየሱስ ብሎ ከሞትም ድኗል \nክብር አለን ክብር አለን እኛስ\nክብር አለን ክብር አለን እኛስ \nለታረደው በግ ለጌታ እየሱስ\nለታረደው በግ የጌታ እየሱስ \n\n[5]\nየታሰርንበትን እስራት ለፍታ\nሁሉም ለሚያድን ለከበረው ጌታ ኦ(2×)\n\n አዝ:",
+              "[አዝ፡]\nእንኳን የጌታ ሆንን (3×)\nበእርሱ አምነን በእርሱ ዳንን\nእንኳን የየሱስ ሆንን (3×)\n\n[1]\nበአለም ጨለማ ምድረበዳ\nእንኳን የጌታ ሆንን\nወደ ጥፍት አገር ስንነዳ\nእንኳን የጌታ ሆንን\nአምነን በእርሱ ስም አመለጥን\nእንኳን የጌታ ሆንን\nበሰማይ በቀኙ ተቀመጥን\nእንኳን የጌታ ሆንን\n\n[2]\nዙራችን ተከቦ በሚያጠፉ\nእንኳን የጌታ ሆንን\nበክብር ከተማ ሊያስቀረን\nእንኳን የጌታ ሆንን\nዛሬ ነገር ተገልብጦል\nእንኳን የጌታ ሆንን\nየጌታ ስም ጠርተን ይኸው ድነናል\nእንኳን የጌታ ሆንን\n\n[3]\nእየሱስ እየሱስ ብሎ ጠርቶ\nእንኳን የጌታ ሆንን\nያድነኛል ብሎ ተመክቶ\nእንኳን የጌታ ሆንን\nያፈረ ሰው ማነው ይምጣ ብሎ\nእንኳን የጌታ ሆንን\nታማኝ ጌታ አለህ የከበረ\nእንኳን የጌታ ሆንን\n\n[አዝ፡]\nእንኳን የጌታ ሆንን (3×)\nበእርሱ አምነን በእርሱ ዳንን\nእንኳን የእየሱስ ሆንን (3×)\n",
+            "[አዝ፡]\nበምረትህ ብዛት ቤትህ እገባለው\nበበዛው ይቅርታ ደግሜ (3×) ቆሜያለዉ\n\n[1]\nዉስጤ አረጋ ብሎ ወላውዬ ባሳቤ\nአይ አለማወቄ ተደለለ ሞኚ ልቤ\nአሁን በጌታዬ ይኸው በራ ጨለማዬ\nላልመለስ በቃ ለልሸነፍ በዘመኔ\n\n[2]\nከበጎች መሀል ተለይቼ ተነጥዬ\nወዴት ሔደ ብሎ ሲፈልገኝ እረኛዬ\nሲያገኘኝ በደስታ እያለቀስኩ ከነእንባዬ\nተሸክሞኝ ጀርባው እያወደኝ ያ ጌታዬ\n\n[አዝ፡]\nበምረትህ ብዛት ቤትህ እገባለው\nበበዛው ይቅርታ ደግሜ (3×) ቆሜያለዉ\n\n[3]\nየሰማሁት ወሰደኝ ደግሞ አይቶ ይሄ አይኔ\nሴይጣን አስፈራርቶኝ መጥፋቴ ነው ወይኔ ለኔ\nአይሆንም ከንግዲ ለቅሶ ምሬት በሰፈሬ\nይኸው ዘምራለው ተደፍኖሉልኝ መቃብሬ\n\n"
+            ];
+            
+            const demoArtists = [
+                "እግሩ እንደጋለ ብረት",
+                "በቀራንዮ መስቀል",
+                "ክቡር ነህ",
+                "እኔ እሮጣለሁ",
+                "ክብር አለን",
+                "እንኳን የጌታ ሆንን",
+                "በምረትህ ብዛት",
+                "ምስጋና 1",
+                "ምስጋና 2",
+                "ምስጋና 3"
+            ];
+            
+            const demoData = [];
+            for (let i = 0; i < 10; i++) {
+                demoData.push({
+                    id: Date.now() + i,
+                    title:demoArtists[i],
+                    artist: `መዝሙር ${i+1}`,
+                    lyrics: demoLyrics[i],
+                    audioPath: `audio/song${i+1}.mp3`, // Path to audio files
+                    favorite: false,
+                    details: {
+                        writer: i === 0 ? "ምስጋና choir " : "ምስጋና choir",
+                        rhythm: i === 0 ? "4/4" : "3/4",
+                        chord: i === 0 ? "C chord" : "D chord",
+                        date: i === 0 ? "2020-05-15" : "2021-02-20",
+                        genre: i === 0 ? "Rock" : "waltz"
+                    }
+                });
+            }
+            
+            return demoData;
+        }
+
+        // Switch between all songs and favorites tabs
+        function switchTab(tab) {
+            currentView = tab;
+            document.getElementById('allSongsTab').classList.toggle('active', tab === 'all');
+            document.getElementById('favoritesTab').classList.toggle('active', tab === 'favorites');
+            searchSongs();
+        }
+
+        // Render song list
+        function renderSongList(songs) {
+            const songList = document.getElementById('songList');
+            songList.innerHTML = '';
+            
+            // Filter based on current view
+            const filteredSongs = currentView === 'favorites' 
+                ? songs.filter(song => song.favorite)
+                : songs;
+            
+            if (filteredSongs.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.textContent = currentView === 'favorites' 
+                    ? 'No favorite songs yet. Add some!' 
+                    : 'No songs found. Add a new song!';
+                emptyMessage.style.textAlign = 'center';
+                emptyMessage.style.padding = '20px';
+                songList.appendChild(emptyMessage);
+                return;
+            }
+            
+            filteredSongs.forEach(song => {
+                const songCard = document.createElement('div');
+                songCard.className = 'song-card';
+                songCard.dataset.id = song.id;
+                
+                songCard.innerHTML = `
+                    <div class="song-info">
+                        <div class="song-title">
+                            ${song.favorite ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="var(--favorite-color)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' : ''}
+                            ${song.title}
+                        </div>
+                        <div class="song-artist">${song.artist}</div>
+                    </div>
+                    <div class="song-actions">
+                        <button class="icon-btn edit-btn" title="Edit Song">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                        </button>
+                        <button class="icon-btn delete-btn" title="Delete Song">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                songCard.addEventListener('click', (e) => {
+                    // Don't navigate if clicking on buttons
+                    if (!e.target.closest('.edit-btn') && !e.target.closest('.delete-btn')) {
+                        showSongDetails(song);
+                    }
+                });
+                
+                // Add edit button event
+                const editBtn = songCard.querySelector('.edit-btn');
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showEditSongModal(song);
+                });
+                
+                // Add delete button event
+                const deleteBtn = songCard.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteSong(song.id);
+                });
+                
+                songList.appendChild(songCard);
+            });
+            
+            // Show list view
+            document.getElementById('songList').style.display = 'grid';
+            document.getElementById('songView').style.display = 'none';
+        }
+
+        // Show song details
+        function showSongDetails(song) {
+            currentSong = song;
+            document.getElementById('viewSongTitle').textContent = song.title;
+            document.getElementById('viewSongArtist').textContent = song.artist;
+            document.getElementById('viewSongLyrics').textContent = song.lyrics;
+            
+            // Set up audio player
+            if (song.audioPath) {
+                audioPlayer.src = song.audioPath;
+                audioPlayer.style.display = 'block';
+                playBtn.style.display = 'block';
+                pauseBtn.style.display = 'none';
+                
+                // Load the audio metadata
+                audioPlayer.load();
+            } else {
+                audioPlayer.style.display = 'none';
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'none';
+            }
+            
+            // Update favorite button
+            updateFavoriteButton(song.favorite);
+            
+            // Reset controls to default values
+            document.getElementById('fontSizeControl').value = 1;
+            document.getElementById('lineHeightControl').value = 1.8;
+            document.getElementById('fontSizeValue').textContent = '1rem';
+            document.getElementById('lineHeightValue').textContent = '1.8';
+            
+            // Apply default styles
+            document.documentElement.style.setProperty('--lyric-font-size', '1rem');
+            document.documentElement.style.setProperty('--lyric-line-height', '1.8');
+            
+            // Show song view
+            document.getElementById('songList').style.display = 'none';
+            document.getElementById('songView').style.display = 'block';
+        }
+
+        // Update favorite button state
+        function updateFavoriteButton(isFavorite) {
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            favoriteBtn.innerHTML = isFavorite 
+                ? `<svg viewBox="0 0 24 24" width="20" height="20" fill="var(--favorite-color)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                : `<svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+            favoriteBtn.title = isFavorite ? 'Remove from Favorites' : 'Add to Favorites';
+        }
+
+        // Show details modal with song information
+        function showDetailsModal() {
+            if (!currentSong) return;
+            
+            const details = currentSong.details || {};
+            
+            // Set the detail values
+            document.getElementById('detailWriter').textContent = details.writer || 'Not specified';
+            document.getElementById('detailRhythm').textContent = details.rhythm || 'Not specified';
+            document.getElementById('detailChord').textContent = details.chord || 'Not specified';
+            document.getElementById('detailDate').textContent = details.date || 'Not specified';
+            document.getElementById('detailGenre').textContent = details.genre || 'Not specified';
+            
+            // Show the modal
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        // Toggle favorite status
+        function toggleFavorite() {
+            if (!currentSong) return;
+            
+            let songs = JSON.parse(localStorage.getItem('songs')) || [];
+            const songIndex = songs.findIndex(s => s.id === currentSong.id);
+            
+            if (songIndex !== -1) {
+                songs[songIndex].favorite = !songs[songIndex].favorite;
+                localStorage.setItem('songs', JSON.stringify(songs));
+                currentSong.favorite = songs[songIndex].favorite;
+                updateFavoriteButton(currentSong.favorite);
+                
+                // If we're in favorites view and song was unfavorited, refresh the list
+                if (currentView === 'favorites' && !currentSong.favorite) {
+                    renderSongList(songs);
+                }
+            }
+        }
+
+        // Show song list
+        function showSongList() {
+            document.getElementById('songList').style.display = 'grid';
+            document.getElementById('songView').style.display = 'none';
+            currentSong = null;
+            audioPlayer.pause();
+        }
+
+        // Search songs
+        function searchSongs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const songs = JSON.parse(localStorage.getItem('songs')) || [];
+            
+            let filteredSongs = currentView === 'favorites' 
+                ? songs.filter(song => song.favorite)
+                : songs;
+            
+            if (searchTerm !== '') {
+                filteredSongs = filteredSongs.filter(song => 
+                    song.title.toLowerCase().includes(searchTerm) || 
+                    song.artist.toLowerCase().includes(searchTerm) ||
+                    song.lyrics.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderSongList(filteredSongs);
+        }
+
+        // Show add song modal
+        function showAddSongModal() {
+            document.getElementById('songForm').reset();
+            document.getElementById('songForm').dataset.mode = 'add';
+            document.getElementById('addSongModal').style.display = 'flex';
+        }
+
+        // Copy lyrics to clipboard
+        function copyLyrics() {
+            const lyrics = document.getElementById('viewSongLyrics').textContent;
+            navigator.clipboard.writeText(lyrics).then(() => {
+                alert('Lyrics copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy lyrics: ', err);
+                alert('Failed to copy lyrics. Please try again.');
+            });
+        }
+
+        // Show edit song modal
+        function showEditSongModal(song) {
+            const form = document.getElementById('songForm');
+            form.reset();
+            form.dataset.mode = 'edit';
+            form.dataset.id = song.id;
+            
+            document.getElementById('songTitle').value = song.title;
+            document.getElementById('songArtist').value = song.artist;
+            document.getElementById('songLyrics').value = song.lyrics;
+            
+            // Populate details fields if they exist
+            if (song.details) {
+                document.getElementById('songWriter').value = song.details.writer || '';
+                document.getElementById('songRhythm').value = song.details.rhythm || '';
+                document.getElementById('songChord').value = song.details.chord || '';
+                document.getElementById('songDate').value = song.details.date || '';
+                document.getElementById('songGenre').value = song.details.genre || '';
+            }
+            
+            document.getElementById('addSongModal').style.display = 'flex';
+        }
+
+        // Show share modal
+        function showShareModal() {
+            if (!currentSong) return;
+            document.getElementById('shareModal').style.display = 'flex';
+        }
+
+        // Handle song form submission
+        function handleSongFormSubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const mode = form.dataset.mode;
+            const title = document.getElementById('songTitle').value;
+            const artist = document.getElementById('songArtist').value;
+            const lyrics = document.getElementById('songLyrics').value;
+            const audioFile = document.getElementById('songAudioFile').files[0];
+            
+            // Get details
+            const details = {
+                writer: document.getElementById('songWriter').value,
+                rhythm: document.getElementById('songRhythm').value,
+                chord: document.getElementById('songChord').value,
+                date: document.getElementById('songDate').value,
+                genre: document.getElementById('songGenre').value
+            };
+            
+            let songs = JSON.parse(localStorage.getItem('songs')) || [];
+            
+            if (mode === 'add') {
+                const newSong = {
+                    id: Date.now(),
+                    title,
+                    artist,
+                    lyrics,
+                    audioPath: audioFile ? `audio/${audioFile.name}` : null,
+                    favorite: false,
+                    details
+                };
+                
+                songs.push(newSong);
+                
+                // In a real app, you would store the audio file
+                if (audioFile) {
+                    console.log(`Audio file "${audioFile.name}" should be saved to the "audio" folder`);
+                }
+            } else if (mode === 'edit') {
+                const songId = parseInt(form.dataset.id);
+                const songIndex = songs.findIndex(s => s.id === songId);
+                
+                if (songIndex !== -1) {
+                    songs[songIndex] = {
+                        ...songs[songIndex],
+                        title,
+                        artist,
+                        lyrics,
+                        audioPath: audioFile ? `audio/${audioFile.name}` : songs[songIndex].audioPath,
+                        details: {
+                            ...(songs[songIndex].details || {}),
+                            ...details
+                        }
+                    };
+                    
+                    if (audioFile) {
+                        console.log(`Audio file "${audioFile.name}" should be saved to the "audio" folder`);
+                    }
+                }
+            }
+            
+            localStorage.setItem('songs', JSON.stringify(songs));
+            renderSongList(songs);
+            document.getElementById('addSongModal').style.display = 'none';
+        }
+
+        // Delete song
+        function deleteSong(id) {
+            if (confirm('Are you sure you want to delete this song?')) {
+                let songs = JSON.parse(localStorage.getItem('songs')) || [];
+                songs = songs.filter(song => song.id !== id);
+                localStorage.setItem('songs', JSON.stringify(songs));
+                renderSongList(songs);
+                
+                // If we were viewing the deleted song, go back to list
+                if (currentSong && currentSong.id === id) {
+                    showSongList();
+                }
+            }
+        }
+
+        // Update font size
+        function updateFontSize() {
+            const fontSize = document.getElementById('fontSizeControl').value;
+            document.documentElement.style.setProperty('--lyric-font-size', `${fontSize}rem`);
+            document.getElementById('fontSizeValue').textContent = `${fontSize}rem`;
+            
+            // Update full screen lyrics if active
+            if (document.getElementById('fullScreenLyrics').style.display !== 'none') {
+                document.getElementById('fullScreenLyricsContent').style.fontSize = `${fontSize}rem`;
+            }
+        }
+
+        // Update line height
+        function updateLineHeight() {
+            const lineHeight = document.getElementById('lineHeightControl').value;
+            document.documentElement.style.setProperty('--lyric-line-height', lineHeight);
+            document.getElementById('lineHeightValue').textContent = lineHeight;
+            
+            // Update full screen lyrics if active
+            if (document.getElementById('fullScreenLyrics').style.display !== 'none') {
+                document.getElementById('fullScreenLyricsContent').style.lineHeight = lineHeight;
+            }
+        }
+
+        // Highlight choruses in lyrics
+        function highlightChoruses() {
+            const lyricsElement = document.getElementById('viewSongLyrics');
+            let lyrics = lyricsElement.textContent;
+            
+            // Split into sections
+            const sections = lyrics.split('\n\n');
+            
+            // Process each section
+            const processedSections = sections.map(section => {
+                const lines = section.split('\n');
+                const firstLine = lines[0].toLowerCase();
+                
+                // Check if this is a chorus section
+                if (firstLine.includes('chorus') || firstLine.includes('refrain') || firstLine.includes('[አዝ፡]')) {
+                    return `<div class="highlight-section">${section}</div>`;
+                }
+                return section;
+            });
+            
+            // Join sections back together
+            lyricsElement.innerHTML = processedSections.join('\n\n');
+        }
+
+        // Toggle full screen mode for lyrics
+        function toggleFullScreen() {
+            if (!currentSong) return;
+            
+            const lyrics = document.getElementById('viewSongLyrics').textContent;
+            const title = document.getElementById('viewSongTitle').textContent;
+            const artist = document.getElementById('viewSongArtist').textContent;
+            
+            // Set full screen content
+            document.getElementById('fullScreenLyricsContent').textContent = 
+                `${title}\n${artist}\n\n${lyrics}`;
+            
+            // Apply current font size and line height
+            const fontSize = document.getElementById('fontSizeControl').value;
+            const lineHeight = document.getElementById('lineHeightControl').value;
+            document.getElementById('fullScreenLyricsContent').style.fontSize = `${fontSize}rem`;
+            document.getElementById('fullScreenLyricsContent').style.lineHeight = lineHeight;
+            
+            // Show full screen
+            document.body.classList.add('full-screen-mode');
+            document.getElementById('fullScreenLyrics').style.display = 'flex';
+        }
+
+        // Exit full screen mode
+        function exitFullScreen() {
+            document.body.classList.remove('full-screen-mode');
+            document.getElementById('fullScreenLyrics').style.display = 'none';
+        }
+
+        // Share functions
+        function shareToTwitter() {
+            if (!currentSong) return;
+            const text = `Check out "${currentSong.title}" by ${currentSong.artist} on Songbook!`;
+            const url = `https://example.com/song/${currentSong.id}`; // Replace with your actual URL
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function shareToFacebook() {
+            if (!currentSong) return;
+            const url = `https://example.com/song/${currentSong.id}`; // Replace with your actual URL
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function shareToWhatsApp() {
+            if (!currentSong) return;
+            const text = `Check out "${currentSong.title}" by ${currentSong.artist} on Songbook!`;
+            const url = `https://example.com/song/${currentSong.id}`; // Replace with your actual URL
+            window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank');
+        }
+
+        function copyShareLink() {
+            if (!currentSong) return;
+            const url = `https://example.com/song/${currentSong.id}`; // Replace with your actual URL
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Link copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy link: ', err);
+                alert('Failed to copy link. Please try again.');
+            });
+        }
+
+        // Theme switching function
+        function changeTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            
+            switch (theme) {
+                case 'light':
+                    document.documentElement.style.setProperty('--primary-color', '#800800');
+                    document.documentElement.style.setProperty('--secondary-color', '#807532');
+                    document.documentElement.style.setProperty('--text-color', '#333333');
+                    document.documentElement.style.setProperty('--border-color', '#dddddd');
+                    document.documentElement.style.setProperty('--accent-color', '#007acc');
+                    document.documentElement.style.setProperty('--background-color', '#ffffff');
+                    document.documentElement.style.setProperty('--card-bg', '#f3f3f3');
+                    document.documentElement.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
+                    document.documentElement.style.setProperty('--highlight-color', '#f1f3f4');
+                    break;
+                case 'polarized':
+                document.documentElement.style.setProperty('--primary-color', '#f5f5f5');
+                document.documentElement.style.setProperty('--secondary-color', '#ffcc99');
+                document.documentElement.style.setProperty('--accent-color', '#1565c0');
+                document.documentElement.style.setProperty('--text-color', '#fff6ff');
+                document.documentElement.style.setProperty('--border-color', '#e0e0e0');
+                document.documentElement.style.setProperty('--background-color', '#007661');
+                document.documentElement.style.setProperty('--card-bg', '#004953');
+                document.documentElement.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
+                document.documentElement.style.setProperty('--highlight-color', '#e3f2fd');
+                document.documentElement.style.setProperty('--favorite-color', '#d32f2f');
+                break;
+                case 'monokia':
+                    document.documentElement.style.setProperty('--primary-color', '#4d1a7f');
+                    document.documentElement.style.setProperty('--secondary-color', '#967116');
+                    document.documentElement.style.setProperty('--accent-color', '#a6e22e');
+                    document.documentElement.style.setProperty('--text-color', '#ffc4c4');
+                    document.documentElement.style.setProperty('--border-color', '#75715e');
+                    document.documentElement.style.setProperty('--background-color', '#272822');
+                    document.documentElement.style.setProperty('--card-bg', '#3e3d32');
+                    document.documentElement.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.3)');
+                    document.documentElement.style.setProperty('--highlight-color', '#49483e');
+                    document.documentElement.style.setProperty('--favorite-color', '#fd971f');
+                    break;
+                case 'ocean':
+                    document.documentElement.style.setProperty('--primary-color', '#e3fd');
+                    document.documentElement.style.setProperty('--secondary-color', '#7C0A02');
+                    document.documentElement.style.setProperty('--accent-color', '#1e88e5');
+                    document.documentElement.style.setProperty('--text-color', '#0d47a1');
+                    document.documentElement.style.setProperty('--border-color', '#90caf9');
+                    document.documentElement.style.setProperty('--background-color', '#e3f2fd');
+                    document.documentElement.style.setProperty('--card-bg', '#bbdefb');
+                    document.documentElement.style.setProperty('--shadow-color', 'rgba(30, 136, 229, 0.2)');
+                    document.documentElement.style.setProperty('--highlight-color', '#e1f5fe');
+                    document.documentElement.style.setProperty('--favorite-color', '#00897b');
+                    break;
+                case 'forest':
+                    document.documentElement.style.setProperty('--primary-color', '#e89e');
+                    document.documentElement.style.setProperty('--secondary-color', '#003A6c');
+                    document.documentElement.style.setProperty('--accent-color', '#2e7d32');
+                    document.documentElement.style.setProperty('--text-color', '#1b5e20');
+                    document.documentElement.style.setProperty('--border-color', '#a5d6a7');
+                    document.documentElement.style.setProperty('--background-color', '#e8f5e9');
+                    document.documentElement.style.setProperty('--card-bg', '#c8e6c9');
+                    document.documentElement.style.setProperty('--shadow-color', 'rgba(46, 125, 50, 0.2)');
+                    document.documentElement.style.setProperty('--highlight-color', '#f1f8e9');
+                    document.documentElement.style.setProperty('--favorite-color', '#d81b60');
+                    break;
+                default: // dark theme
+                    document.documentElement.style.setProperty('--primary-color', 'blue');
+                    document.documentElement.style.setProperty('--secondary-color', '#665D1e');
+                    document.documentElement.style.setProperty('--accent-color', '#007acc');
+                    document.documentElement.style.setProperty('--text-color', '#568203');
+                    document.documentElement.style.setProperty('--border-color', '#454545');
+                    document.documentElement.style.setProperty('--background-color', '#1e1e1e');
+                    document.documentElement.style.setProperty('--card-bg', '#252526');
+                    document.documentElement.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.3)');
+                    document.documentElement.style.setProperty('--highlight-color', '#41331c');
+                    document.documentElement.style.setProperty('--favorite-color', '#ff4444');
+            }
+            
+            localStorage.setItem('theme', theme);
+        }
+
+        // Load saved theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.getElementById('themeSelect').value = savedTheme;
+            changeTheme(); // Apply the theme
+        }
+    </script>
+</body>
+</html>
